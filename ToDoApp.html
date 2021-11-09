@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- <meta name="viewport" content="width=<device-width>, initial-scale=1.0"> -->
+    <link rel="stylesheet" href="css/ToDoApp.css">
+    <title>ToDo Application</title>
+</head>
+<body>
+
+    <h1>TASKS</h1>
+    <ul id="myTaskList">My Tasks:
+
+    </ul>
+     <div class="myContainer">
+        
+            <form onsubmit="mySubmit(event)">
+
+                <div class="myDiv">
+                    <label for="taskTitle">Task:</label>
+                    <input type="text" id=taskTitle name=taskTitle title="Please enter a title. Any Alphnumeric characteres. Required field." size="100" required>
+
+                </div>
+                <div class="myDiv">
+                    <label for="taskDescription">Description:</label>
+                    <input type="text" id=taskDescription name=taskDescription title="Please enter a description. Any Alphanumeric characters. Optional field." size="100">
+                </div>
+
+                <div class="myDiv">
+                    <label for="taskStartDate">Start date:</label>
+                        <input type="date" id=taskStartDate name=taskStartDate title="Please select a Start date. The date must be = > today. Required." required>
+                </div>
+                <div class="myDiv">
+                    <label for="taskDueDate">Due date:</label>
+                        <input type="date" id=taskDueDate name=taskDueDate title="Please select a Due date. The date must be = > the Start date. Required." required>
+                </div>
+                <div class="myDiv">
+
+                    <p>Please select a category:</p>
+                        <input type="radio" id="category1" name="category" value="WORK" checked>
+                        <label for="category1">WORK</label>
+                        <input type="radio" id="category2" name="category" value="PLAY">
+                        <label for="category2">PLAY</label>
+                        <input type="radio" id="category3" name="category" value="LIFE">
+                        <label for="category3">LIFE</label>
+                </div>
+                <div >
+                    <button>ADD NEW TASK</button>
+                </div>
+            </form>
+    </div>
+    <p id="message"></p>
+
+
+    <script type="text/javascript" src="js/ToDoApp.js"></script>
+
+
+</body>
+</html>
