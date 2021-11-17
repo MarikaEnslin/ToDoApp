@@ -1,60 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- <meta name="viewport" content="width=<device-width>, initial-scale=1.0"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+
     <link rel="stylesheet" href="css/ToDoApp.css">
-    <title>ToDo Application</title>
+
+    <title>MultiTask</title>
 </head>
+
 <body>
+    <div class="container-fluid">
+        <div class="row">
+            <header class=bannerTop>
+                <h1>MultiTask</h1>
+                <h2>~ because you can! ~</h2>
+            </header>
+        </div> <!-- Row end -->
 
-    <h1>TASKS</h1>
-    <ul id="myTaskList">My Tasks:
-
-    </ul>
-     <div class="myContainer">
-        
-            <form onsubmit="mySubmit(event)">
-
-                <div class="myDiv">
-                    <label for="taskTitle">Task:</label>
-                    <input type="text" id=taskTitle name=taskTitle title="Please enter a title. Any Alphnumeric characteres. Required field." size="100" required>
+        <!-- <div class="container-fluid"> -->
+        <div class="row">
+            <div class="col-lg-2">
+                <div class="menuArea">
+                    <h3>Actions:</h3>
+                        <div>
+                            <button class="buttonStyle" onclick="updateDisplay('all')">ALL TASKS</button>
+                        </div>
+                        <div>
+                            <button class="buttonStyle" onclick="updateDisplay('today')">TODAY</button>
+                        </div>
+                        <div>
+                            <button class="buttonStyle" onclick="updateDisplay('week')">THIS WEEK</button>
+                        </div>
+                        <div>
+                            <button class="buttonStyle" onclick="sortTasks()">SORT A-Z</button>
+                        </div>
 
                 </div>
-                <div class="myDiv">
-                    <label for="taskDescription">Description:</label>
-                    <input type="text" id=taskDescription name=taskDescription title="Please enter a description. Any Alphanumeric characters. Optional field." size="100">
+            </div>
+
+            <div class="col-lg-9">
+                <div class="taskList">
+                    <h3 id='listName'>My Tasks:</h3>
+                    <ul id="myTaskList">
+                        <!-- Add the li's dynamically -->
+                    </ul>
                 </div>
 
-                <div class="myDiv">
-                    <label for="taskStartDate">Start date:</label>
-                        <input type="date" id=taskStartDate name=taskStartDate title="Please select a Start date. The date must be = > today. Required." required>
-                </div>
-                <div class="myDiv">
-                    <label for="taskDueDate">Due date:</label>
-                        <input type="date" id=taskDueDate name=taskDueDate title="Please select a Due date. The date must be = > the Start date. Required." required>
-                </div>
-                <div class="myDiv">
+                <div class="newTask">
+                <h3>New Task:</h3>
+                <form onsubmit="mySubmit(event)">
 
-                    <p>Please select a category:</p>
+                    <div class="myDiv">
+                        <label for="taskTitle">Task:</label>
+                        <input type="text" id=taskTitle name=taskTitle
+                            title="Please enter a title. Any Alphnumeric characteres. Required field." size="69" required>
+
+                    </div>
+                    <div class="myDiv">
+                        <label for="taskDescription">Description:</label>
+                        <input type="text" id=taskDescription name=taskDescription
+                            title="Please enter a description. Any Alphanumeric characters. Optional field." size="60">
+                    </div>
+
+                    <div class="myDiv">
+                        <label for="taskStartDate">Start date:</label>
+                        <input type="date" id=taskStartDate name=taskStartDate
+                            title="Please select a Start date. The date must be = > today. Required." required>
+                    </div>
+                    <div class="myDiv">
+                        <label for="taskDueDate">Due date:</label>
+                        <input type="date" id=taskDueDate name=taskDueDate
+                            title="Please select a Due date. The date must be = > the Start date. Required." required>
+                    </div>
+                    <div class="myDiv">
+
+                        <p>Please select a category:</p>
                         <input type="radio" id="category1" name="category" value="WORK" checked>
                         <label for="category1">WORK</label>
                         <input type="radio" id="category2" name="category" value="PLAY">
                         <label for="category2">PLAY</label>
                         <input type="radio" id="category3" name="category" value="LIFE">
                         <label for="category3">LIFE</label>
+                    </div>
+                    <div class="myDiv">
+                        <button class="buttonStyle">ADD NEW</button>
+                    </div>
+                </form>
+            </div>
+
+
+
+        </div>
+        <!-- </div> -->
+
+
+
+        <div class="row">
+            <div class="bannerBottom">
+                <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <p>“The only limit to the height of your achievements is the reach of your dreams and your willingness to work for them.”– Michelle Obama</p>
+                        </div>
+                        <div class="carousel-item">
+                            <p>“Setting goals is the first step in turning the invisible into the visible.” – Tony Robbins</p>
+                        </div>
+                        <div class="carousel-item">
+                            <p>“Never give up. Today is hard, tomorrow will be worse, but the day after tomorrow will be sunshine.” - Jack Ma</p>
+                        </div>
+                        <div class="carousel-item">
+                            <p>“You can’t be that kid standing at the top of the waterslide, overthinking it. You have to go down the chute.” - Tina Fey</p>
+                        </div>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
+                        data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls"
+                        data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
                 </div>
-                <div >
-                    <button>ADD NEW TASK</button>
-                </div>
-            </form>
+            </div>
+        </div>
     </div>
-    <p id="message"></p>
 
+        <script type="text/javascript" src="js/ToDoApp.js"></script>
 
-    <script type="text/javascript" src="js/ToDoApp.js"></script>
-
+        <!-- Option 1: Bootstrap Bundle with Popper -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj"
+            crossorigin="anonymous"></script>
 
 </body>
+
 </html>
