@@ -58,21 +58,101 @@ class Task {
 }
 
 let taskArray = [];
-updateDisplay();
+let todayTaskArray = [];
+let weekTaskArray = [];
+let currentList = 'all';
+loadFromStorage();
+//Start by showing ALL TASKS
+updateDisplay('all');
 
-
-//Get the stored TASKS from the local storage
-function updateDisplay() {
-    let myText = localStorage.getItem("userData");
+//Get the stored TASKS ARRAYS from the local storage
+function loadFromStorage(){
+    let allTasksString = localStorage.getItem("allTasks");
     //If there is stored data to load
-    if (myText != null) {
-        taskArray = JSON.parse(myText);
-        let ul = document.getElementById("myTaskList");
-        ul.style.listStyle = 'none';
-        ul.innerHTML = "";
-        for (i = 0; i < taskArray.length; i++) {
-            let myObj = taskArray[i];
-            let myString = `Taak ${i + 1}: ${myObj._title} - ${myObj._description} - Completed = ${myObj._completed} - `;
+    if (allTasksString != null) {
+        taskArray = JSON.parse(allTasksString);
+    }
+
+    let todayTasksString = localStorage.getItem("todayTasks");
+    //If there is stored data to load
+    if (todayTasksString != null) {
+        todayTaskArray = JSON.parse(todayTasksString);
+    }
+    
+    let weekTasksString = localStorage.getItem("weekTasks");
+    //If there is stored data to load
+    if (weekTasksString != null) {
+        weekTaskArray = JSON.parse(weekTasksString);
+    }
+}
+
+//Save the current data to locale Storage
+function saveToStorage(){
+    // Save the taskArray to local storage
+    allTasksString = JSON.stringify(taskArray);
+    localStorage.setItem("allTasks", allTasksString);
+    
+    //Load the filtered todayArray
+    todayTaskArray = [];
+    let todayDate = new Date();
+    for(i=0; i < taskArray.length; i++){
+        let myDateString = taskArray[i]._startDate;
+        let myStartDate = new Date(myDateString);
+        if(myStartDate.getDate() == todayDate.getDate()){
+            todayTaskArray.push(taskArray[i]);
+        }
+    }
+    //Convert to JSON data and write to localstorage
+    todayTasksString = JSON.stringify(todayTaskArray);
+    localStorage.setItem("todayTasks", todayTasksString);
+    
+    //Load the filtered weekArray
+    weekTaskArray = [];
+    let weekDate = new Date();
+    for(i=0; i < taskArray.length; i++){
+        let myDateString = taskArray[i]._startDate;
+        let myStartDate = new Date(myDateString);
+        if(myStartDate.getDate() >= weekDate.getDate() && myStartDate.getDate() <= weekDate.getDate()+7){
+            weekTaskArray.push(taskArray[i]);
+        }
+    }
+    //Convert to JSON data and write to localstorage
+    weekTasksString = JSON.stringify(weekTaskArray);
+    localStorage.setItem("weekTasks", weekTasksString);
+}
+
+//Refresh the display with the latest data as stored in locale storage
+function updateDisplay(filterString) {
+    let ul = document.getElementById("myTaskList");
+    ul.style.listStyle = 'none';
+    ul.innerHTML = "";
+    let displayArray = [];
+
+    switch(filterString) {
+        case 'all':
+            displayArray = taskArray;
+            currentList = 'all';
+            document.getElementById('listName').innerHTML = 'My Tasks - ALL'
+            break;
+        case 'today':
+            displayArray = todayTaskArray;
+            currentList = 'today';
+            document.getElementById('listName').innerHTML = 'My Tasks - TODAY' 
+            break;
+        case 'week':
+            displayArray = weekTaskArray;
+            currentList = 'week';
+            document.getElementById('listName').innerHTML = 'My Tasks - WEEK' 
+            break;
+        default:
+            console.log('updateDisplay() - no array loaded');
+    }
+
+    //First check the length, else display 'no task' message
+    if (displayArray.length > 0){
+        for (i = 0; i < displayArray.length; i++) {
+            let myObj = displayArray[i];
+            let myString = `Task ${i + 1}: ${myObj._title.toUpperCase()} -  Description: ${myObj._description} `;
             let li = document.createElement("li");
             if (myObj._completed == 'Y'){
                 li.style.textDecoration = 'line-through';
@@ -87,24 +167,31 @@ function updateDisplay() {
         // Create a REMOVE and COMPLETED buttons and append it to each list item
         let myNodelist = document.getElementsByTagName("li");
         for (i = 0; i < myNodelist.length; i++) {
-            let myObj = taskArray[i];
+            let myObj = displayArray[i];
             let button = document.createElement('input');
             button.setAttribute('type', 'button');
             button.setAttribute('value', 'REMOVE');
+            button.setAttribute('class', 'buttonStyle');
             button.setAttribute('onclick', `removeTask(${i})`);
             myNodelist[i].appendChild(button);
+
 
             let button2 = document.createElement('input');
             button2.setAttribute('type', 'button');
             button2.setAttribute('value', 'COMPLETED');
+            button2.setAttribute('class', 'buttonStyle');
             button2.setAttribute('onclick', `completeTask(${i})`);
             myNodelist[i].appendChild(button2);
-
         }
+    }
+    else{
+        let li = document.createElement("li");
+        li.appendChild(document.createTextNode("There are no tasks to display"));
+        ul.appendChild(li);
     }
 }
 
-
+//On Submit (and after HTML valiation) push() the new task to the taskArray
 function mySubmit(event) {
 
     event.preventDefault();
@@ -128,38 +215,149 @@ function mySubmit(event) {
     let myTask = new Task(taskTitle, taskDescription, taskStartDate, taskDueDate, taskCategory)
     taskArray.push(myTask);
 
-    //Convert to JSON data and write to localstorage
-    myData = JSON.stringify(taskArray);
-    localStorage.setItem("userData", myData);
-    updateDisplay();
+    //Save to locale storage
+    saveToStorage();
+    
+    //Update the display
+    switch(currentList) {
+        case 'all':
+            updateDisplay('all');
+            break;
+        case 'today':
+            updateDisplay('today');
+            break;
+        case 'week':
+            updateDisplay('week');
+            break;
+        default:
+            console.log('mySubmit() - no current list');
+    }
+
+    //Also clear the inputs in the form
+    console.log('clear fields');
+    document.getElementById("taskTitle").value = "";
+    document.getElementById("taskDescription").value = "";
+    document.getElementById("taskStartDate").value = "";
+    document.getElementById("taskDueDate").value = "";
+
 }
 
+//Remove a task from the list and update the display
 function removeTask(taskNumber) {
+    console.log(taskNumber);
+    switch(currentList) {
+        case 'all':
+            myObj = taskArray[taskNumber];
+            break;
+        case 'today':
+            myObj = todayTaskArray[taskNumber];
+            break;
+        case 'week':
+            myObj = weekTaskArray[taskNumber];
+            break;
+        default:
+            console.log('removeTask() - no current list');
+    }
+
+    console.log(myObj);
+    myString1 = JSON.stringify(myObj);
     let myNodelist = document.getElementsByTagName("li");
     for (i = 0; i < myNodelist.length; i++) {
-        if (i == taskNumber) {
+        myString2 = JSON.stringify(taskArray[i]);
+        console.log(myString2);
+        if (myString1 == myString2) {
             taskArray.splice(taskNumber, 1);
         }
     }
-    // Save the taskArray to local storage and show the updated list
-    myData = JSON.stringify(taskArray);
-    localStorage.setItem("userData", myData);
-    updateDisplay();
+    //Save to locale storage
+    saveToStorage();
+    
+    //Update the display
+    switch(currentList) {
+        case 'all':
+            updateDisplay('all');
+            break;
+        case 'today':
+            updateDisplay('today');
+            break;
+        case 'week':
+            updateDisplay('week');
+            break;
+        default:
+            console.log('removeTask() - no current list');
+    }
 }
 
-
+// Mark a task as completed and update the display
 function completeTask(taskNumber) {
+    
+    switch(currentList) {
+        case 'all':
+            myObj = taskArray[taskNumber];
+            break;
+        case 'today':
+            myObj = todayTaskArray[taskNumber];
+            break;
+        case 'week':
+            myObj = weekTaskArray[taskNumber];
+            break;
+        default:
+            console.log('completeTask() - no current list');
+    }
+
+    myString1 = JSON.stringify(myObj);
     let myNodelist = document.getElementsByTagName("li");
     for (i = 0; i < myNodelist.length; i++) {
-        if (i == taskNumber) {
-            let myObj = taskArray[i];
-            myObj._completed = 'Y';
+        myString2 = JSON.stringify(taskArray[i]);
+        if (myString1 == myString2) {
+            taskArray[i]._completed = 'Y';
+            console.log( taskArray[i]);
         }
     }
-    // Save the taskArray to local storage and show the updated list
-    myData = JSON.stringify(taskArray);
-    localStorage.setItem("userData", myData);
-    updateDisplay();
+    //Save to locale storage
+    saveToStorage();
+    
+    //Update the display
+    switch(currentList) {
+        case 'all':
+            updateDisplay('all');
+            break;
+        case 'today':
+            updateDisplay('today');
+            break;
+        case 'week':
+            updateDisplay('week');
+            break;
+        default:
+            console.log('completeTask() - no current list');
+    }
 }
 
+// Sort the tasks in alphbetical order
+function sortTasks(){
+    taskArray.sort(function(a, b){
+        let stringA = a._title.toUpperCase();
+        let stringB = b._title.toUpperCase();
+        if(stringA < stringB) { return -1; }
+        if(stringA > stringB) { return 1; }
+        return 0;
+    })
 
+    //Save to locale storage
+    saveToStorage();
+    
+    //Update the display
+    switch(currentList) {
+        case 'all':
+            updateDisplay('all');
+            break;
+        case 'today':
+            updateDisplay('today');
+            break;
+        case 'week':
+            updateDisplay('week');
+            break;
+        default:
+            console.log('sortTasks() - no current list');
+    }
+}
