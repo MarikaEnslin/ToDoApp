@@ -31,7 +31,7 @@ h3{
 
 .bannerTop {
   height: 400px;
-  background-image: url('../images/long.png');
+  background-image: url('../images/long.jpg');
   background-repeat: no-repeat;
   background-position: center;
   color:black;
@@ -41,7 +41,6 @@ h3{
   padding-top: 50px;
   height: 150px;
   color:black;
-  /* background-color: #a75e6f; */
   background-color: #8a5b66;
   text-align: center;
   font-weight: bolder;
@@ -91,7 +90,7 @@ h3{
   background-color: #b096a2;
 }
 
-   /* Remove margins and padding from the list */
+/* Remove margins and padding from the list */
 ul {
   margin-right: 20px; 
 }
